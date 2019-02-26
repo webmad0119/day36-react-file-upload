@@ -5,7 +5,8 @@ class Home extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      file: null
+      file: null,
+      photos: []
     }
   }
   handleChange(e) {
@@ -16,18 +17,27 @@ class Home extends Component {
   handleSubmit(e) {
     e.preventDefault()
     // Reuse of the method "addPicture" from the file '../api'
-    api.addPicture(this.state.file)
+    api.addPicture(this.state.file).then(photoData => {
+      let newPhotos = [...this.state.photos]
+      newPhotos.push(photoData)
+
+      this.setState({
+        ...this.state,
+        photos: newPhotos
+      })
+    })
   }
   render() {                
     return (
       <div className="Home">
-        <h2>Home</h2>
-        <p>This is a sample project with the MERN stack</p>
+        <h2>Photo Upload</h2>
         
         <form onSubmit={(e)=>this.handleSubmit(e)}>
           <input type="file" onChange={(e)=>this.handleChange(e)} /> <br/>
-          <button type="submit">Save new profile picture</button>
+          <button type="submit">Upload photo</button>
         </form>
+
+        {this.state.photos.map(photo => <img key={photo.url} src={photo.url} alt="" />)}
       </div>
     );
   }
